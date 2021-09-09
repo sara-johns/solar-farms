@@ -13,7 +13,7 @@ logger.addHandler(ch)
 #------------------ CONFIGURATION -------------------------------
 
 # Set your Google API key here. 
-API_KEY = 'AIzaSyA6z5V6V082EWK6Cq4umuXI8mPqdvVYuAc'
+API_KEY = 'API_KEY_HERE'
 # Backoff time sets how many minutes to wait between google pings when your API limit is hit
 BACKOFF_TIME = 30
 # Set your output file name here.
