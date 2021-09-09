@@ -17,11 +17,11 @@ API_KEY = 'API_KEY_HERE'
 # Backoff time sets how many minutes to wait between google pings when your API limit is hit
 BACKOFF_TIME = 30
 # Set your output file name here.
-output_filename = '/Users/sarajohns/Google Drive/My Drive/Farmers_Solar/data/ipa_lottery/schools_loc.csv'
+output_filename = '/Users/sarajohns/Google Drive/My Drive/Farmers_Solar/data/ipa_lottery/processed/group_a_addresses_geocoded.csv'
 # Set your input file here
-input_filename = "/Users/sarajohns/Google Drive/My Drive/Farmers_Solar/data/ipa_lottery/Lottery-Results-CS-A-Report-Corrected-4.12.19-1.xlsx"
+input_filename = "/Users/sarajohns/Google Drive/My Drive/Farmers_Solar/data/ipa_lottery/processed/group_a_addresses.csv"
 # Specify the column name in your input data that contains addresses here
-address_column_name = "full_add"
+address_column_name = "clean_add"
 # Return Full Google Results? If True, full JSON results from Google are included in output
 RETURN_FULL_RESULTS = False
 
