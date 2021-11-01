@@ -116,3 +116,23 @@ write_csv(group_b_add, paste0(directory, "processed/group_b_addresses.csv"))
 
 write_csv(group_a_coord, paste0(directory, "processed/group_a_coordinates.csv"))
 write_csv(group_b_coord, paste0(directory, "processed/group_b_coordinates.csv"))
+
+#--------------------------------------------------------------------------------------------#
+# 5. Get list of developers and number of projects and save
+#--------------------------------------------------------------------------------------------#
+
+# combine groups
+group_a[, group := "A"]
+group_b[, group := "B"]
+all_projects <- rbind(group_a, group_b)
+
+# indicator for winning project
+all_projects[, wins := ifelse(`Lottery Status` == "Accepted", 1, 0)]
+
+# sum by developer (across groups)
+developer_list <- all_projects[,. (winning_projects = sum(wins),
+                                   total_projects = .N),
+                               by = c("Name of Approved Vendor")]
+developer_list <- developer_list[order(-total_projects)]
+
+write_csv(developer_list, paste0(directory, "processed/list_of_developers.csv"))
