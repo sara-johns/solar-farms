@@ -46,6 +46,10 @@ clean_coord <- function(dt) {
   dt[!(is.na(str_match(lat, "([0-9]{2}\\.[0-9]{4,6})")[,1])), lat_in_dec := 1]
   dt[!(is.na(str_match(lon, "([0-9]{2}\\.[0-9]{4,6})")[,1])), lon_in_dec := 1]
   
+  # mark if in degree dec min
+  dt[is.na(lat_in_dec) & !(grepl('"', lat) | grepl("''", lat)), lat_deg_dec_min := 1]
+  dt[is.na(lon_in_dec) & !(grepl('"', lon) | grepl("''", lon)), lon_deg_dec_min := 1]
+  
   # convert the others to decimal degrees
   # get in format for conversion
   dt[is.na(lat_in_dec), lat := gsub("°", " ", lat)]
@@ -54,7 +58,9 @@ clean_coord <- function(dt) {
   dt[is.na(lat_in_dec), lat := gsub('"', "", lat)]
   dt[is.na(lat_in_dec), lat := gsub("  ", " ", lat)]
   # convert
-  dt[is.na(lat_in_dec), lat_dec := as.numeric(conv_unit(lat, from = "deg_min_sec", to = "dec_deg"))]
+  dt[is.na(lat_in_dec) & is.na(lat_deg_dec_min), lat_dec := as.numeric(conv_unit(lat, from = "deg_min_sec", to = "dec_deg"))]
+  dt[is.na(lat_in_dec) & lat_deg_dec_min==1, lat_dec := as.numeric(conv_unit(lat, from = "deg_dec_min", to = "dec_deg"))]
+  
   # put coordinates already in decimal degrees in same column 
   dt[lat_in_dec == 1, lat_dec := as.numeric(gsub("[^0-9.-]", "", lat))]
   
@@ -66,7 +72,8 @@ clean_coord <- function(dt) {
   dt[is.na(lon_in_dec), lon := gsub('-', "", lon)]
   dt[is.na(lon_in_dec), lon := gsub("  ", " ", lon)]
   dt[is.na(lon_in_dec), lon := trimws(lon, which = "both")]
-  dt[is.na(lon_in_dec), lon_dec := as.numeric(conv_unit(lon, from = "deg_min_sec", to = "dec_deg"))]
+  dt[is.na(lon_in_dec) & is.na(lon_deg_dec_min), lon_dec := as.numeric(conv_unit(lon, from = "deg_min_sec", to = "dec_deg"))]
+  dt[is.na(lon_in_dec) & lon_deg_dec_min==1, lon_dec := as.numeric(conv_unit(lon, from = "deg_dec_min", to = "dec_deg"))]
   dt[lon_in_dec == 1, lon_dec := as.numeric(gsub("[^0-9.-]", "", lon))]
   # make negative since in western hemisphere
   dt[lon_dec > 0, lon_dec := lon_dec * -1]
@@ -74,6 +81,8 @@ clean_coord <- function(dt) {
   # clean up columns
   dt[, lat := lat_dec][,lon := lon_dec]
   dt[, c("lat_in_dec", "lon_in_dec", "lat_dec", "lon_dec") := NULL]
+  # weirdness with lat only columns so remove those
+  dt[is.na(lon), lat := NA]
   
   return(dt)
 }
